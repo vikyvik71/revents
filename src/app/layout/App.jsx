@@ -10,12 +10,14 @@ import PeopleDashboard from "../../features/user/PeopleDashboard/PeopleDashboard
 import { Container } from 'semantic-ui-react';
 import { Route, Switch } from 'react-router-dom';
 import TestComponent from '../../features/testarea/TestComponent';
+import ModalManager from '../../features/modals/ModalManager';
 
 
 class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <ModalManager />
         <Switch>
           <Route path="/" component={HomePage} exact />
         </Switch>
@@ -27,6 +29,7 @@ class App extends Component {
                 <Switch>
                   <Route path="/events" component={EventDashboard} />
                   <Route path="/event/:id" component={EventDetailedPage} />
+                  <Route path="/manage/:id" component={EventForm} />
                   <Route path="/createEvent" component={EventForm} />
                   <Route path="/people" component={PeopleDashboard} />
                   <Route path="/profile/:id" component={UserDetailedPage} />

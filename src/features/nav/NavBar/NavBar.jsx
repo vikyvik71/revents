@@ -3,19 +3,23 @@ import { Menu, Container, Button } from 'semantic-ui-react';
 import { NavLink, Link, withRouter } from 'react-router-dom';
 import SignedOutMenu from '../Menus/SignedOutMenu';
 import SignedInMenu from '../Menus/SignedInMenu';
+import { connect } from "react-redux";
+import { openModal } from '../../modals/modalActions';
+import { logout } from '../../auth/authActions';
 
 class NavBar extends Component {
-    state = {
-      authenticated: false
-    }
-    handleSignIn = () => {
-      this.setState({ authenticated: true });
-    }
+  handleSignIn = () => {
+    this.props.openModal('LoginModal')
+  }
+  handleRegister = () => {
+    this.props.openModal('RegisterModal')
+  }
   handleSignOut = () => {
-    this.setState({ authenticated: false });
+    this.props.logout();
     this.props.history.push('/');
   }
     render() {
+      const { auth } = this.props;
         return <Menu inverted fixed="top">
             <Container>
               <Menu.Item as={Link} to="/" header>
@@ -24,17 +28,26 @@ class NavBar extends Component {
               </Menu.Item>
               <Menu.Item as={NavLink} to="/events" name="Events" />
               <Menu.Item as={NavLink} to="/test" name="Test" />
-              {this.state.authenticated && <Menu.Item as={NavLink} to="/people" name="People" />}
+              {auth.authenticated && <Menu.Item as={NavLink} to="/people" name="People" />}
               {
-                this.state.authenticated && 
+                auth.authenticated && 
                 <Menu.Item>
                   <Button as={Link} to="/createEvent" floated="right" positive inverted content="Create Event" />
                 </Menu.Item>
               }             
-              {this.state.authenticated ? <SignedInMenu signOut={this.handleSignOut} /> : <SignedOutMenu signIn={this.handleSignIn} />}
+              {auth.authenticated ? <SignedInMenu currentUser={auth.currentUser} signOut={this.handleSignOut} /> : <SignedOutMenu signIn={this.handleSignIn} register={this.handleRegister} />}
             </Container>
           </Menu>;
     }
 }
 
-export default withRouter(NavBar);
+const actions = {
+  openModal,
+  logout
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth
+});
+
+export default withRouter(connect(mapStateToProps, actions)(NavBar));
